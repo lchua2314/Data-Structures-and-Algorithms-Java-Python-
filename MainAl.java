@@ -101,6 +101,7 @@ public class MainAl {
         }
         */
         
+        /*
         int[][] a = {{1,0,2,4}, 
                      {-3,2,2,4},
                      {-3,2,2,4},
@@ -129,6 +130,19 @@ public class MainAl {
         
         System.out.println("Printing resulting matrix: ");
         printMat(c);
+        */
+        towerOfHanoi(4, 'A', 'B', 'C');
+    }
+    
+    //2^n-1 time complexity!
+    public static void towerOfHanoi(int n, char firstTower, char secondTower, char thirdTower) {
+        if (n == 1) {
+            System.out.println("Move disk 1 from rod: " + firstTower + " to rod: " + thirdTower);
+            return;
+        }
+        towerOfHanoi(n-1, firstTower, thirdTower, secondTower);
+        System.out.println("Move " + n + " from rod: " + firstTower + " to rod: " + thirdTower);
+        towerOfHanoi(n-1, secondTower, firstTower, thirdTower);
     }
     
     public static void printMat(int[][] c) {
