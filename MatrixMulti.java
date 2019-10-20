@@ -31,7 +31,7 @@ public class MatrixMulti {
 			//
 			long start = System.nanoTime();
 			//Code here
-			int[][] c = matrixMult(n, a, b);
+			int[][] c = classicMult(n, a, b);
 			
 			//To check the result of c with classic matrix multiplcation, 
 			//uncomment block the following:
@@ -71,7 +71,7 @@ public class MatrixMulti {
         }
     }
     
-    public static int[][] straAdd(int n, int a[][], int b[][]) {
+    public static int[][] matrixAdd(int n, int a[][], int b[][]) {
         int[][] result = new int[n][n];
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < n; j++) {
@@ -81,7 +81,7 @@ public class MatrixMulti {
         return result;
     }
     
-    public static int[][] straSub(int n, int a[][], int b[][]) {
+    public static int[][] matrixSub(int n, int a[][], int b[][]) {
         int[][] result = new int[n][n];
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < n; j++) {
@@ -110,11 +110,11 @@ public class MatrixMulti {
     public static int[][] strassenMult(int n, int a[][], int b[][]){
         
         if (n == 1) { //When a and b is 1x1.
-            return matrixMult(n, a, b);
+            return classicMult(n, a, b);
         }
         else {
-            int mid = n/2;
-            int[][] result = new int[n][n];         
+            int[][] result = new int[n][n];  
+            int mid = n/2;       
             int[][] a11 = new int[mid][mid];
             int[][] a12 = new int[mid][mid];
             int[][] a21 = new int[mid][mid];
@@ -149,19 +149,19 @@ public class MatrixMulti {
             int[][] u;
             int[][] v;
             
-            p = strassenMult(mid, straAdd(mid, a11, a22), straAdd(mid, b11, b22));
-            q = strassenMult(mid, straAdd(mid, a21, a22), b11);
-            r = strassenMult(mid, a11, straSub(mid, b12, b22));
-            s = strassenMult(mid, a22, straSub(mid, b21, b11));
-            t = strassenMult(mid, straAdd(mid, a11, a12), b22);
-            u = strassenMult(mid, straSub(mid, a21, a11), straAdd(mid, b11, b12));
-            v = strassenMult(mid, straSub(mid, a12, a22), straAdd(mid, b21, b22));
+            p = strassenMult(mid, matrixAdd(mid, a11, a22), matrixAdd(mid, b11, b22));
+            q = strassenMult(mid, matrixAdd(mid, a21, a22), b11);
+            r = strassenMult(mid, a11, matrixSub(mid, b12, b22));
+            s = strassenMult(mid, a22, matrixSub(mid, b21, b11));
+            t = strassenMult(mid, matrixAdd(mid, a11, a12), b22);
+            u = strassenMult(mid, matrixSub(mid, a21, a11), matrixAdd(mid, b11, b12));
+            v = strassenMult(mid, matrixSub(mid, a12, a22), matrixAdd(mid, b21, b22));
             
             //Forming c
-            c11 = straAdd(mid, straSub(mid, straAdd(mid, p, s), t), v);
-            c12 = straAdd(mid, r, t);
-            c21 = straAdd(mid, q, s);
-            c22 = straAdd(mid, straSub(mid, straAdd(mid, p, r), q), u);
+            c11 = matrixAdd(mid, matrixSub(mid, matrixAdd(mid, p, s), t), v);
+            c12 = matrixAdd(mid, r, t);
+            c21 = matrixAdd(mid, q, s);
+            c22 = matrixAdd(mid, matrixSub(mid, matrixAdd(mid, p, r), q), u);
             
             //Put c together
             buildMat(result, c11, 0, 0);
@@ -172,21 +172,53 @@ public class MatrixMulti {
         }
     }
     
-    public static int[][] matrixMult(int n, int a[][], int b[][]) {
-        int[][] result = new int[n][n];
+    public static int[][] classicMult(int n, int a[][], int b[][]) {
         if (n == 1) {
-            result[0][0] = a[0][0]*b[0][0];             
+            int[][] result = new int[1][1];     
+            result[0][0] = a[0][0]*b[0][0];
+            return result;             
         }
         else {
-            for(int i = 0; i < n; i++) {
-                for(int j = 0; j < n; j++) {
-                    result[i][j] = a[i][0]*b[0][j]; 
-                    for(int k = 1 ; k < n; k++) {
-                        result[i][j] += a[i][k]*b[k][j];
-                    }  
-                }
-            }
+            int[][] result = new int[n][n]; 
+            int mid = n/2;        
+            int[][] a11 = new int[mid][mid];
+            int[][] a12 = new int[mid][mid];
+            int[][] a21 = new int[mid][mid];
+            int[][] a22 = new int[mid][mid];
+            
+            int[][] b11 = new int[mid][mid];
+            int[][] b12 = new int[mid][mid];
+            int[][] b21 = new int[mid][mid];
+            int[][] b22 = new int[mid][mid];
+          
+            int[][] c11;
+            int[][] c12;
+            int[][] c21;
+            int[][] c22;
+            
+            //Partition matrices into 4 smaller pieces.
+            partitionMat(a,a11,0,0);
+            partitionMat(a,a12,0,mid);
+            partitionMat(a,a21,mid,0);
+            partitionMat(a,a22,mid,mid);
+            
+            partitionMat(b,b11,0,0);
+            partitionMat(b,b12,0,mid);
+            partitionMat(b,b21,mid,0);
+            partitionMat(b,b22,mid,mid);
+            
+            //Doing Classic Matrix Multiplcation
+            c11 = matrixAdd(mid, classicMult(mid, a11, b11), classicMult(mid, a12, b21));
+            c12 = matrixAdd(mid, classicMult(mid, a11, b12), classicMult(mid, a12, b22));
+            c21 = matrixAdd(mid, classicMult(mid, a21, b11), classicMult(mid, a22, b21));
+            c22 = matrixAdd(mid, classicMult(mid, a21, b12), classicMult(mid, a22, b22));
+            
+            //Put c together
+            buildMat(result, c11, 0, 0);
+            buildMat(result, c12, mid, 0);
+            buildMat(result, c21, 0, mid);
+            buildMat(result, c22, mid, mid);
+            return result;
         }
-        return result;
     }
 }
