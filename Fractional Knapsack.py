@@ -59,7 +59,7 @@ def sequentialSearch(list, item):
 #Prints a 1D list using iterative.
 def print1DList(inputList):
     for count in range(len(inputList)):
-        print("list[", count, "]: ", inputList[count])
+        print("index[", count, "]: ", inputList[count])
 
 #Inputs: 2D list that has the price, weight, and price-to-weight ratio of each object, 
 #1D list with the order of object's indices to prioritize,
@@ -109,28 +109,47 @@ def printResults(objectsList, orderList, quantityOfObjectsList):
     totalWeight = 0.0
     print("Profit Calculation:", end="")
     for count in range(len(quantityOfObjectsList)): #Iterates until number of objects is reached.
-        profit += objectsList[orderList[count]][0]*quantityOfObjects[count] #Add object price times the quantity of object starting from greatest price-to-weight ratio.
-        totalWeight += objectsList[orderList[count]][1]*quantityOfObjects[count] #Add object weight times the quantity of that item from greatest price-to-wegiht ratio.
-        if count == len(quantityOfObjects)-1: #If last iteration, print the last object's price times quantity, equal sign, and final profit.
-            print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", quantityOfObjects[count]," = ", profit)
+        profit += objectsList[orderList[count]][0]*quantityOfObjectsList[count] #Add object price times the quantity of object starting from greatest price-to-weight ratio.
+        totalWeight += objectsList[orderList[count]][1]*quantityOfObjectsList[count] #Add object weight times the quantity of that item from greatest price-to-wegiht ratio.
+        if count == len(quantityOfObjectsList)-1: #If last iteration, print the last object's price times quantity, equal sign, and final profit.
+            print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", quantityOfObjectsList[count]," = ", profit)
             print("Total Weight:", totalWeight) #Prints total weight of knapsack.
             print("Total Profit:", profit) #Prints total profit from taken items from knapsack.
             break #Break the loop so the next line of code does not occur.
-        print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", Fraction(quantityOfObjects[count]).limit_denominator(), end=" + ")
+        print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", Fraction(quantityOfObjectsList[count]).limit_denominator(), end=" + ")
         #Above^, print object number, price of object, multiplcation sign, quantity, and end with '+' sign
 
 #Main      
+
+while 1:
+    knapsackSize = eval(input("Knapsack Size: ")) #Prompt and input user's knapsack size.
+    if knapsackSize <= 0:
+        print("Please enter a value that is greater than 0")
+    else:
+        break
+
 #Prompt user for number of objects and input int value into numOfObj
-numOfObj = eval(input("Number of Objects: ")) 
+numOfObj = 0
+while numOfObj <= 0:
+    numOfObj = eval(input("Number of Objects: "))
+    if numOfObj <= 0:
+        print("Please enter a number that is greater than 0.") 
 #Initialize a list called 'objects' and fill in numOfObjx3 list with 'None'.
 objects = [[None for _ in range(3)] for _ in range(numOfObj)] 
 #Prompt user and input object's price then weight in decsending order.
-col = 0 #Initialize col with 0 indicating column 1 is for price. Column 2 (index 1) is for weight. Column 3 (index 2) is empty for now.
 for row in range(numOfObj):
-    objects[row][col] = float(input("Object " + str(row + 1) + " Price: "))
-    col += 1
-    objects[row][col] = float(input("Object " + str(row + 1) + " Weight: "))
-    col = 0
+    while 1:
+        objects[row][0] = float(input("Object " + str(row + 1) + " Price: "))
+        if objects[row][0] <= -1:
+            print("Please enter a price that is non-negative")
+        else:
+            break
+    while 1:
+        objects[row][1] = float(input("Object " + str(row + 1) + " Weight: "))
+        if objects[row][1] <= 0:
+            print("Please enter a weight that is greater than 0")
+        else:
+            break
 
 #Calculates price-to-weight ratio and fills in the list.
 calPriceToWeight(objects)
@@ -139,7 +158,6 @@ print2DList(objects) #Prints out 2D list with prices, weights, and price-to-weig
 order = orderObjects(objects) #Initializes list with the priority of objects to take first based on price-to-weight ratio.
 print("Order of object's indices from descending order with respect to price to weight ratio:")
 print1DList(order) #Prints 1D list 'order' with the indices of priority to take from based on price-to-weight ratio of 'objects' list.
-knapsackSize = eval(input("Knapsack Size: ")) #Prompt and input user's knapsack size.
 quantityOfObjects = portionOfObjs(objects, order, knapsackSize) #Initializes a list with the quantity of objects to take based on priority of object's price-to-weight ratio.
 print("Quantity of objects to pick up:")
 print1DList(quantityOfObjects) #Prints the quantity of objects that should be taken based on 'order' list.
