@@ -20,6 +20,7 @@ def orderObjects(objectList):
     maxIndex = 0 #Set max's index to object 1's index.
     sortedAlready = [] #Create a new list that will be returned with the order of indices from greatest to least.
     #counter = 0 #Used to mark each iteration of the while loop.
+
     while numOfObj-1 != len(sortedAlready)-1: #Loop while there are object's indices not in sortedAlready[] list. Stop when number of objects is equal to sortedAlready[] list length.
         #print("Going into for loop")
         for row in range(numOfObj): #Check through the whole 2D list's number of rows (num of objects).
@@ -83,8 +84,8 @@ def portionOfObjs(objectsList, orderList, knapsackSize):
 
     #print("Weight w/o fraction:",weight, "Object needed for fraction:", count)
     
-    #If all can fit into knapsack, return list.
-    if weight == knapsackSize: 
+    #If all can fit into knapsack OR only one object which it's weight is less than or equal to knapsack size, return list.
+    if weight == knapsackSize or (len(objectsList) == 1 and objectsList[orderList[0]][1] <= knapsackSize): 
         return quantity #Returns a list with the quantity of items that the knapsack can hold. Only returns 0's and 1's
     else: #Else find the fractional object. 
         i = 2 #i is the denominator of the fraction.
@@ -112,7 +113,7 @@ def printResults(objectsList, orderList, quantityOfObjectsList):
         profit += objectsList[orderList[count]][0]*quantityOfObjectsList[count] #Add object price times the quantity of object starting from greatest price-to-weight ratio.
         totalWeight += objectsList[orderList[count]][1]*quantityOfObjectsList[count] #Add object weight times the quantity of that item from greatest price-to-wegiht ratio.
         if count == len(quantityOfObjectsList)-1: #If last iteration, print the last object's price times quantity, equal sign, and final profit.
-            print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", quantityOfObjectsList[count]," = ", profit)
+            print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", Fraction(quantityOfObjectsList[count])," = ", profit)
             print("Total Weight:", totalWeight) #Prints total weight of knapsack.
             print("Total Profit:", profit) #Prints total profit from taken items from knapsack.
             break #Break the loop so the next line of code does not occur.
