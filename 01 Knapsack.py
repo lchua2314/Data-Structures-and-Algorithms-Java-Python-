@@ -8,12 +8,14 @@ def createSizeVsObjList(knapsackSize, weight, price, num):
         for weightOfCol in range(knapsackSize + 1): 
             if weightOfCol == 0 or i == 0: #If object # is 0 or knapsack size is 0, profit will be 0 in that cell. 
                 newList[i][weightOfCol] = 0
-            elif weight[i-1] > weightOfCol: #If the previous object's weight is greater than to the current knapsack size in this loop,
-                                            #Update newList's current cell to the previous object's weight above the current cell.
+            elif weight[i-1] > weightOfCol: #If the current object's weight (current because number of objects + 1 extra row)
+                                            #is greater than to the current knapsack size in this loop,
+                                            #Update newList's current cell to the previous object's profit based on the weight above the current cell.
                 newList[i][weightOfCol] = newList[i-1][weightOfCol]
-            elif weight[i-1] <= weightOfCol: #If the previous object's weight is less than or equal to the current knapsack size in this loop,
-                #Update newList's current cell to either the previous object's price plus the previous object's (row) and the current column minus the last object's weight
-                #OR the previous object's weight above the current cell based on which one has a higher max. 
+            elif weight[i-1] <= weightOfCol: #If the current object's weight is less than or equal to the current knapsack size in this loop,
+                #Update newList's current cell to either the current object's price plus the profit of the previous object's (row) and the current column minus
+                #the current object's weight
+                #OR the previous object's profit based on the same weight above the current cell based on which one has a higher max. 
                 newList[i][weightOfCol] = max(price[i-1] + newList[i-1][weightOfCol-weight[i-1]],  newList[i-1][weightOfCol])  
 
     return newList
