@@ -9,7 +9,7 @@ def calPriceToWeight(list):
 def print2DList(list):
     print("                Price      Weight   Price/Weight")
     for row in range(numOfObj):
-        print("Object ", row + 1, " : ", end="")
+        print("Object ", row + 1, ": ", end="")
         for col in range(3):
             print(" | ", list[row][col], " | ", end="")
         print()   
@@ -57,10 +57,15 @@ def sequentialSearch(list, item):
             return True
     return False
 
-#Prints a 1D list using iterative.
-def print1DList(inputList):
+#Prints 1D list specifically for priority of objects to pick from
+def print1DListOrder(inputList):
     for count in range(len(inputList)):
-        print("index[", count, "]: ", inputList[count])
+        print(count + 1,". Object", inputList[count] + 1)
+
+#Prints both order and quantity of objects based on priority on price-to-weight ratio.
+def printOrderAndQuantity(orderList, quantityList):
+    for count in range(len(orderList)):
+        print(count + 1, ". Object ", orderList[count] + 1, ":", quantityList[count])
 
 #Inputs: 2D list that has the price, weight, and price-to-weight ratio of each object, 
 #1D list with the order of object's indices to prioritize,
@@ -120,8 +125,7 @@ def printResults(objectsList, orderList, quantityOfObjectsList):
         print("( Object", orderList[count]+1, ")", objectsList[orderList[count]][0], "x", Fraction(quantityOfObjectsList[count]).limit_denominator(), end=" + ")
         #Above^, print object number, price of object, multiplcation sign, quantity, and end with '+' sign
 
-#Main      
-
+#Driver
 while 1:
     knapsackSize = eval(input("Knapsack Size: ")) #Prompt and input user's knapsack size.
     if knapsackSize <= 0:
@@ -154,12 +158,13 @@ for row in range(numOfObj):
 
 #Calculates price-to-weight ratio and fills in the list.
 calPriceToWeight(objects)
-print("Table after price to weight ratio was calculated:")
+print("\nTable after price to weight ratio was calculated:")
 print2DList(objects) #Prints out 2D list with prices, weights, and price-to-weight ratios of all objects in descending order.
 order = orderObjects(objects) #Initializes list with the priority of objects to take first based on price-to-weight ratio.
-print("Order of object's indices from descending order with respect to price to weight ratio:")
-print1DList(order) #Prints 1D list 'order' with the indices of priority to take from based on price-to-weight ratio of 'objects' list.
+print("\nOrder of object's indices from descending order with respect to price to weight ratio:")
+print1DListOrder(order) #Prints 1D list 'order' with the indices of priority to take from based on price-to-weight ratio of 'objects' list.
 quantityOfObjects = portionOfObjs(objects, order, knapsackSize) #Initializes a list with the quantity of objects to take based on priority of object's price-to-weight ratio.
-print("Quantity of objects to pick up:")
-print1DList(quantityOfObjects) #Prints the quantity of objects that should be taken based on 'order' list.
+print("\nQuantity of objects to pick up:")
+printOrderAndQuantity(order, quantityOfObjects) #Prints the quantity of objects that should be taken based on 'order' list.
 printResults(objects, order, quantityOfObjects) #Prints price calculation, total weight of knapsack, and profit.
+exit = input("\nEnter anything to exit program: ")
